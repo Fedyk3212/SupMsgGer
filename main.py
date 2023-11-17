@@ -122,7 +122,7 @@ def clientmode():
             client.close()
             maindef()
 
-
+# Списки подключений и ников
 conns = []
 nicks = {}
 

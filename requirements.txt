@@ -26,6 +26,7 @@ pycairo==1.25.1
 pycparser==2.21
 pycups==2.0.1
 pycurl==7.45.2
+pydub==0.25.1
 PyGObject==3.46.0
 PyQt5==5.15.10
 PyQt5-sip==12.13.0

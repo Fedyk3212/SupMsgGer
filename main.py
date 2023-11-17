@@ -1,14 +1,44 @@
 import json
 import socket
 import time
+from threading import Thread
 
 import art
 from colorama import Fore
 from colorama import Style
 
 
+# Главная Функция
 def maindef():
+    print("\033[H\033[J")
     print(Fore.BLUE)
+    artsd = ("""
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⠉⠉⠁⠄⠄⠄⠄⠈⠉⠉⠛⠿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⠟⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⠻⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣇⠄⠄⠄⢀⣀⣀⣀⠄⠄⠄⠄⠄⢀⣀⣀⣀⡀⠄⠄⢠⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⡄⠄⣼⣿⣿⣿⣿⣷⠄⠄⠄⢀⣿⣿⣿⣿⣿⠄⠄⣼⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⠄⠹⣿⣿⣿⣿⠏⣰⣿⣷⡀⢿⣿⣿⣿⡿⠄⢸⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⠄⠄⠉⠛⠛⠁⢠⣿⣿⣿⣷⠄⠙⠛⠋⠄⠄⢸⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣄⣀⡀⠄⠄⠄⠈⠛⠋⠙⠋⠄⠄⠄⠄⣀⣀⣸⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣀⡄⠄⢀⡀⣀⠄⠄⣤⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⣿⣧⣿⣿⣟⣿⢸⣧⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠸⡏⠿⢿⡿⣿⠛⠏⢿⠁⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡀⠄⠈⠁⠄⠄⠄⣠⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⡇⠄⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⢻⣿⣿⣿⣿
+⣿⣿⣿⣿⠁⠄⠄⠄⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠃⠄⠄⠸⣿⣿⣿⣿
+⣿⣿⣿⣿⣧⣤⣶⣶⣶⣦⣄⠈⠙⠿⣿⣿⣿⡿⠟⠋⢁⣀⣀⣀⠄⢠⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⠄⠉⠁⢀⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⢉⣠⣴⣶⣶⣤⣌⡙⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⡿⠟⢋⣡⣴⣾⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⣈⠙⠻⢿⣿⣿⣿⣿
+⠟⠛⠛⠛⠋⣁⣤⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣄⠄⠄⠄⣨
+⣷⡄⠄⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⣼⣿
+⣿⣿⣤⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+    """)
     art.tprint("SupMESGER")
     print(Fore.BLUE + "Made by Fedyk 3212")
     print("\n")
@@ -41,6 +71,10 @@ def maindef():
         with open("config.json", "w") as f:
             json.dump(cofig, f)
         maindef()
+    elif mode == "debug":
+        print(Fore.RED)
+        print(artsd)
+        quit()
     else:
         print("Вы ввели неверную команду")
     maindef()
@@ -73,24 +107,38 @@ def clientmode():
         time.sleep(1)
         print('\a')
         maindef()
+    print("Введите сообщение")
+    t2 = Thread(target=messege_receve, args=(client,))
+    t2.start()
     while True:
-        while True:
-            print("Введите сообщение")
-            message = input()
-            finmesg = (niknames + ": " + message)
-            client.send(finmesg.encode('utf-8'))
-            if message == "quit":
-                client.close()
-                maindef()
-            elif message == "/nick":
-                niknames = input()
+        message = input()
+        finmesg = (niknames + ": " + message)
+        client.send(finmesg.encode('utf-8'))
+        cmd = message.split()
+        name = cmd[0]
+        if name == "/quit":
+            client.close()
+            maindef()
+        elif name == "/nick":
+            niknames = cmd[1]
+            if name[1] is None or " ":
+                print("Работак команды /nick [Ваше Имя] ")
+
+
+conns = []
+
+
+def messege_receve(client):
+    while True:
+        server = client.recv(1024).decode('utf8')
+        print(server)
 
 
 # Серверный код
 def servermode():
     conf_reload_update()
-    data = conf_reload_update()
-    serverhost = (data["server_ip"], data["server_port"])
+    settings = conf_reload_update()
+    serverhost = (settings["server_ip"], settings["server_port"])
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         # Выбор перед запуском режима сервера
         print(Fore.RED + "Во точно хотите запустить сервер Y/N")
@@ -108,21 +156,28 @@ def servermode():
         try:
             server.bind(serverhost)
         except OSError:
-            print(Fore.RED + "Нерпавильно настрое IP или Порт")
+            print(Fore.RED + "Нерпавильно настроен IP или Порт")
             time.sleep(3)
             maindef()
         # Запуск сервер
-        server.listen()
-        flag = True
+        server.listen(settings["max_peoples"])
         print("Жду запрос на подключение")
-        while flag:
+        while True:
             # сообщения для сервера и от сервера
             msg = "Подключен"
             conn, addr = server.accept()
+            thread = Thread(target=dataprinting, args=(conn,))
+            thread.start()
+            conns.append(conn)
             print(msg, addr)
-            while True:
-                data = conn.recv(1024)
-                print(data.decode("utf-8"))
+
+
+def dataprinting(conn):
+    while True:
+        data = conn.recv(1024)
+        print(data)
+        for conn2 in conns:
+            conn2.send(data)
 
 
 def read_or_default(name, key):

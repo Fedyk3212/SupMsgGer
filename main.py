@@ -83,8 +83,7 @@ def maindef():
 # Клиентский код
 def clientmode():
     conf_reload_update()
-    data = conf_reload_update()
-    niknames = data["nickname"]
+    settings = conf_reload_update()
     print("Write Ip address to connect(default localhost)")
     ip = str(input())
     if ip == "localhost":
@@ -110,22 +109,22 @@ def clientmode():
     print("Введите сообщение")
     t2 = Thread(target=messege_receve, args=(client,))
     t2.start()
+    client.send(str("/nick " + settings["nickname"]).encode('utf-8'))
     while True:
         message = input()
-        finmesg = (niknames + ": " + message)
-        client.send(finmesg.encode('utf-8'))
+        if message == "":
+            continue
+        client.send(message.encode('utf-8'))
         cmd = message.split()
+
         name = cmd[0]
         if name == "/quit":
             client.close()
             maindef()
-        elif name == "/nick":
-            niknames = cmd[1]
-            if name[1] is None or " ":
-                print("Работак команды /nick [Ваше Имя] ")
 
 
 conns = []
+nicks = {}
 
 
 def messege_receve(client):
@@ -166,18 +165,30 @@ def servermode():
             # сообщения для сервера и от сервера
             msg = "Подключен"
             conn, addr = server.accept()
-            thread = Thread(target=dataprinting, args=(conn,))
+            nicks[addr] = "User" + str(len(nicks))
+            thread = Thread(target=dataprinting, args=(conn, addr))
             thread.start()
             conns.append(conn)
             print(msg, addr)
 
 
-def dataprinting(conn):
+def dataprinting(conn: socket.socket, addr):
     while True:
-        data = conn.recv(1024)
-        print(data)
-        for conn2 in conns:
-            conn2.send(data)
+        data = conn.recv(1024).decode('utf-8')
+        if data[0] == "/":
+            cmd = data.split()
+            if cmd[0] == "/nick" and len(cmd) == 2:
+                nicks[addr] = cmd[1]
+
+        else:
+            msg = nicks[addr] + ": " + data
+            print(msg)
+            for conn2 in conns:
+                try:
+                    conn2.send(str(msg).encode('utf-8'))
+                except BrokenPipeError:
+                    conns.remove(conn2)
+                    print("Клиент Отключился")
 
 
 def read_or_default(name, key):

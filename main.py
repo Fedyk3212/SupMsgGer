@@ -114,13 +114,12 @@ def clientmode():
         message = input()
         if message == "":
             continue
-        client.send(message.encode('utf-8'))
-        cmd = message.split()
-
-        name = cmd[0]
-        if name == "/quit":
+        elif message == "/quit":
+            client.send("*Отключился".encode('utf-8'))
             client.close()
             maindef()
+        client.send(message.encode('utf-8'))
+
 
 # Списки подключений и ников
 conns = []
@@ -188,7 +187,6 @@ def dataprinting(conn: socket.socket, addr):
                     conn2.send(str(msg).encode('utf-8'))
                 except BrokenPipeError:
                     conns.remove(conn2)
-                    print("Клиент Отключился")
 
 
 def read_or_default(name, key):
